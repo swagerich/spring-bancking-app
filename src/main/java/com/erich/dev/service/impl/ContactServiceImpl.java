@@ -35,7 +35,7 @@ public class ContactServiceImpl implements ContactService {
     @Override
     @Transactional(readOnly = true)
     public ContactDto findById(Long id) {
-        return contactRepo.findById(id).map(ContactDto::fromEntity).orElseThrow(() -> new EntityNotFoundException("id contact no encontrado!"));
+        return contactRepo.findById(id).map(ContactDto::fromEntity).orElseThrow(() -> new EntityNotFoundException("contactId not found!"));
     }
 
     @Override
@@ -58,7 +58,4 @@ public class ContactServiceImpl implements ContactService {
                 .map(ContactDto::fromEntity).toList();
     }
 
-//    public  void searchByContactfirstNameOrFirstNameWithPage(String lastName, String firstName ,int page,int size){
-//        contactRepo.findByFirstNameOrLastName(firstName,lastName)
-//    }
 }

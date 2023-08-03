@@ -26,29 +26,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
 
     private final CustomUserServiceImpl customUserService;
-
+    private static final String AUTHORIZATION = "Authorization";
+    private static final String BEARER = "Bearer ";
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest request,
                                     @NotNull HttpServletResponse response,
                                     @NotNull FilterChain filterChain) throws ServletException, IOException {
-        String authHeader = request.getHeader("Authorization");
-
+        String authHeader = request.getHeader(AUTHORIZATION);
         String usernameEmail = null;
         String jwt = null;
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+        if (authHeader != null && authHeader.startsWith(BEARER)) {
             jwt = authHeader.substring(7);
             try {
                 usernameEmail = jwtTokenProvider.extractUsername(jwt);
             } catch (ExpiredJwtException e) {
                 e.printStackTrace();
-                log.info("JWT token has expired");
+                log.warn("JWT token has expired");
             } catch (Exception ex) {
                 ex.printStackTrace();
-                log.info("Error");
+                log.warn("Error");
             }
-        } else {
-            log.info("No comienza con la palabra bearer");
         }
         if (usernameEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = customUserService.loadUserByUsername(usernameEmail);
@@ -60,8 +58,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 );
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }
-        } else {
-            log.info("Token invalid");
         }
         filterChain.doFilter(request, response);
     }

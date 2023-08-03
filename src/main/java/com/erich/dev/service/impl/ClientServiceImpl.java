@@ -17,6 +17,7 @@ import com.erich.dev.security.jwt.JwtTokenProvider;
 import com.erich.dev.service.ClientService;
 import com.erich.dev.util.validation.ObjectsValidator;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.util.Streamable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -31,6 +32,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ClientServiceImpl implements ClientService {
 
     private final ClientRepository clientRepo;
@@ -51,7 +53,7 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public UsuarioDto save(UsuarioDto client) {
         if (clientRepo.existsByEmail(client.getEmail())) {
-            throw new OperationNotAllowedException("Email ya existe!");
+            throw new OperationNotAllowedException("Email already exists!");
         }
         Usuario usuario = UsuarioDto.toEntity(client);
         usuario.setPassword(passwordEncoder.encode(client.getPassword()));
@@ -61,40 +63,45 @@ public class ClientServiceImpl implements ClientService {
     @Override
     public UsuarioDto update(UsuarioDto client, Long id) {
         if (!clientRepo.existsById(id)) {
-            throw new IllegalArgumentException("ID NO EXISTE!");
+            throw new IllegalArgumentException("Id does not exist");
         }
         return clientRepo.findById(id).map(x -> {
             x.setFirstName(client.getFirstName());
             x.setLastName(client.getLastName());
             x.setEmail(client.getEmail());
             return UsuarioDto.fromEntity(clientRepo.save(x));
-        }).orElseThrow(() -> new EntityNotFoundException("Client no encontrado"));
+        }).orElseThrow(() -> new EntityNotFoundException("Client not found"));
     }
 
     @Override
     public UsuarioDto findById(Long id) {
-        return clientRepo.findById(id).map(UsuarioDto::fromEntity).orElseThrow(() -> new EntityNotFoundException("Client no encontrado!"));
+        return clientRepo.findById(id).map(UsuarioDto::fromEntity).orElseThrow(() -> new EntityNotFoundException("Client not found!"));
     }
 
     @Override
     public List<UsuarioDto> findAll() {
         return Streamable.of(clientRepo.findAll())
-                .map(u -> UsuarioDto.fromEntity(u))
+                .map(UsuarioDto::fromEntity)
                 .stream().toList();
     }
 
-    public Iterable<Usuario> findAllUsuario() {
-        return clientRepo.findAll();
+
+    public List<UsuarioDto> findAllRoleUser() {
+        Role role = roleRepo.findByAuthority("ROLE_USER").orElseThrow(() -> new EntityNotFoundException("Role not exist!"));
+        return clientRepo.findByRolesContaining(role).stream().map(UsuarioDto::fromEntity).toList();
+
     }
 
     @Transactional
     public Long validateAccount(Long userId) {
         Usuario usuario = clientRepo.findById(userId).orElseThrow(() -> new EntityNotFoundException("No se ha encontrado ningún usuario para la validación de la cuenta de usuario"));
-        AccountDto account = AccountDto.builder().user(UsuarioDto.fromEntity(usuario)).build();
-        var saveAccount = accountService.save(account);
-        usuario.setAccount(Account.builder()
-                .id(saveAccount.getId())
-                .build());
+        if (usuario.getAccount() == null) {
+            AccountDto accountDto = AccountDto.builder().user(UsuarioDto.fromEntity(usuario)).build();
+            var saveAccountDto = accountService.save(accountDto);
+            usuario.setAccount(Account.builder()
+                    .id(saveAccountDto.getId())
+                    .build());
+        }
         usuario.setActive(true);
         clientRepo.save(usuario);
         return usuario.getId();
@@ -118,17 +125,22 @@ public class ClientServiceImpl implements ClientService {
         clientRepo.deleteById(id);
     }
 
-    public JwtResponse login(LoginRequest loginRequest) throws Exception {
+    public JwtResponse login(LoginRequest loginRequest) {
         this.auth(loginRequest.username(), loginRequest.password());
         UserDetails userDetails = customUserService.loadUserByUsername(loginRequest.username());
+        Usuario usuario = (Usuario) userDetails;
+        Map<String,Object> claims = new HashMap<>();
+        claims.put("userId",usuario.getId());
+        claims.put("fullName",usuario.getFirstName() + " " + usuario.getLastName());
+        claims.put("authorities",usuario.getAuthorities());
         return JwtResponse.builder()
-                .accessToken(jwtTokenProvider.generateToken(userDetails))
+                .accessToken(jwtTokenProvider.generateToken(usuario,claims))
                 .TokenType("Bearer ")
                 .build();
     }
 
     @Transactional
-    public String register(SignupRequest signupRequest) {
+    public JwtResponse register(SignupRequest signupRequest) {
         validationFieldSignup(signupRequest);
         Usuario u = Usuario.builder()
                 .firstName(signupRequest.firstName())
@@ -139,47 +151,54 @@ public class ClientServiceImpl implements ClientService {
                 .repeatPassword(passwordEncoder.encode(signupRequest.repeatPassword()))
                 .age(signupRequest.age())
                 .build();
-
         validateRepeatPassword(signupRequest);
         validateRole(signupRequest, u);
-        clientRepo.save(u);
-        return "Usuario registrado con exito!";
+        Usuario usuario = clientRepo.save(u);
+        Map<String,Object> claims = new HashMap<>();
+        claims.put("userId",usuario.getId());
+        claims.put("fullName",usuario.getFirstName() + " " + usuario.getLastName());
+        claims.put("authorities",usuario.getAuthorities());
+        return  JwtResponse.builder()
+                .accessToken(jwtTokenProvider.generateToken(usuario,claims))
+                .TokenType("Bearer ")
+                .build();
     }
 
     private void validateRole(SignupRequest signupRequest, Usuario u) {
         Set<Role> roles = new HashSet<>();
         if (signupRequest.userName().contains("administrador")) {
-            Role roleAdmin = roleRepo.findByAuthority("ROLE_ADMIN").orElseThrow(() -> new EntityNotFoundException("Role user no encontrado!"));
+            Role roleAdmin = roleRepo.findByAuthority("ROLE_ADMIN").orElseThrow(() -> new EntityNotFoundException("Role Admin not found!"));
             roles.add(roleAdmin);
             u.setRoles(roles);
+            u.setActive(true);
         } else {
-            Role userRole = roleRepo.findByAuthority("ROLE_USER").orElseThrow(() -> new EntityNotFoundException("Role user no encontrado!"));
+            Role userRole = roleRepo.findByAuthority("ROLE_USER").orElseThrow(() -> new EntityNotFoundException("Role user not found!"));
             roles.add(userRole);
             u.setRoles(roles);
         }
     }
-    private void auth(String email, String password) throws Exception {
+    private void auth(String email, String password) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
         } catch (DisabledException e) {
-            throw new DisabledException(e.getMessage());
+            throw new DisabledException("Your account is still disabled, wait a moment please!");
         } catch (BadCredentialsException e) {
-            throw new BadCredentialsException("UserName o password Incorrect");
+            throw new BadCredentialsException("Username or Password Incorrect");
         }
     }
 
     private void validationFieldSignup(SignupRequest request) {
         if (clientRepo.existsByEmail(request.email())) {
-            throw new OperationNotAllowedException("Error:  " + request.email() + " ya esta en uso!");
+            throw new OperationNotAllowedException(request.email() + "  Is already in use!");
         }
         if (clientRepo.existsByUserName(request.userName())) {
-            throw new OperationNotAllowedException("Error:  " + request.userName() + " ya esta en uso!");
+            throw new OperationNotAllowedException(request.userName() + " Is already in use!");
         }
     }
 
     private void validateRepeatPassword(SignupRequest signupRequest) {
         if (!signupRequest.password().equals(signupRequest.repeatPassword())) {
-            throw new OperationNotAllowedException("passwords no son iguales");
+            throw new OperationNotAllowedException("Password are not the same");
         }
     }
 }

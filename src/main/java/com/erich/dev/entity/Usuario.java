@@ -49,7 +49,7 @@ public class Usuario extends AbstractEntity implements UserDetails {
     private List<Transaction> transactions;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonIgnore
+    //@JsonIgnore
     private List<Contact> contacts = new ArrayList<>();
 
     @OneToOne
@@ -98,6 +98,6 @@ public class Usuario extends AbstractEntity implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return active;
     }
 }

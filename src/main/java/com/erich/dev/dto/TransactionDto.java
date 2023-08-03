@@ -5,7 +5,6 @@ import com.erich.dev.entity.Usuario;
 import com.erich.dev.util.TransactionType;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.*;
 
@@ -29,7 +28,6 @@ public class TransactionDto {
     @Min(value = 20)
     private BigDecimal amount;
 
-    @NotBlank
     private String destinationBank;
 
     private LocalDate transactionDate;

@@ -1,7 +1,6 @@
 package com.erich.dev.controller.api;
 
 
-import com.erich.dev.dto.UsuarioDto;
 import com.erich.dev.dto.proyection.LoginRequest;
 import com.erich.dev.dto.proyection.SignupRequest;
 import com.erich.dev.entity.Usuario;
@@ -21,5 +20,5 @@ public interface AuthenticationApi {
     ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) throws Exception;
 
     @GetMapping(value = "/current-user")
-    Usuario currentUser(Principal principal);
+    ResponseEntity<Usuario> currentUser(Principal principal);
 }

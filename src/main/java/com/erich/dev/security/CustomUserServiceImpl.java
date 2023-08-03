@@ -1,7 +1,6 @@
 package com.erich.dev.security;
 
 import com.erich.dev.repository.ClientRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,6 +17,6 @@ public class CustomUserServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username){
-        return  clientRepo.findByUserName(username).orElseThrow(() -> new UsernameNotFoundException("Username  no encontrado!"));
+        return  clientRepo.findByUserName(username).orElseThrow(() -> new UsernameNotFoundException("Username  not found!"));
     }
 }

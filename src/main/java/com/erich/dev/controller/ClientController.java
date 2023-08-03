@@ -2,15 +2,12 @@ package com.erich.dev.controller;
 
 import com.erich.dev.controller.api.ClientApi;
 import com.erich.dev.dto.UsuarioDto;
-import com.erich.dev.entity.Usuario;
-import com.erich.dev.security.CustomUserServiceImpl;
+
 import com.erich.dev.service.impl.ClientServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -59,10 +56,8 @@ public class ClientController implements ClientApi {
         return new ResponseEntity<>(clientService.invalidateAccount(userId),HttpStatus.OK);
     }
 
-
-    @GetMapping("/usuarios")
-    Iterable<Usuario> clientAllUsuarios(){
-        return clientService.findAllUsuario();
+    @Override
+    public ResponseEntity<List<UsuarioDto>> getAllRoleUser() {
+        return new ResponseEntity<>(clientService.findAllRoleUser(),HttpStatus.OK);
     }
-
 }

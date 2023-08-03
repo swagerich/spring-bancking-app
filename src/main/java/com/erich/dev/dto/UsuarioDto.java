@@ -24,14 +24,19 @@ public class UsuarioDto {
     private String userName;
 
     @NotBlank
-   // @Email(regexp = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\\\.[A-Za-z0-9-]+)*(\\\\.[A-Za-z]{2,})$")
+    // @Email(regexp = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\\\.[A-Za-z0-9-]+)*(\\\\.[A-Za-z]{2,})$")
     private String email;
 
     @NotBlank
     @Size(min = 3, max = 16)
     private String password;
 
+    @NotBlank
     private Integer age;
+
+    private String numberAccount;
+
+    private boolean active;
 
     public static UsuarioDto fromEntity(Usuario usuario) {
         if (usuario == null) {
@@ -45,6 +50,8 @@ public class UsuarioDto {
                 .email(usuario.getEmail())
                 .password(usuario.getPassword())
                 .age(usuario.getAge())
+                .numberAccount(usuario.getAccount() != null ? usuario.getAccount().getNumber() : "")
+                .active(usuario.isActive())
                 .build();
     }
 
@@ -59,7 +66,7 @@ public class UsuarioDto {
                 .userName(usuarioDto.getUserName())
                 .email(usuarioDto.getEmail())
                 .password(usuarioDto.getPassword())
-                .age((usuarioDto.getAge()))
+                .age(usuarioDto.getAge())
                 .build();
     }
 

@@ -29,6 +29,9 @@ public class JwtTokenProvider {
         Map<String, Object> claims = new HashMap<>();
         return createToken(claims, userDetails);
     }
+    public String generateToken(UserDetails userDetails, Map<String, Object> claims) {
+        return createToken(claims, userDetails);
+    }
 
     private String createToken(Map<String, Object> claims, UserDetails userDetails) {
         return Jwts.builder()

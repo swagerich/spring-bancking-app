@@ -20,7 +20,7 @@ public class GlobalHandlerException {
     @ExceptionHandler(EntityNotFoundException.class)
     public ProblemDetail handleNotFoundException(EntityNotFoundException e) {
         ProblemDetail detail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
-        detail.setTitle("NOT FOUND");
+        detail.setTitle("NOT-FOUND");
         detail.setDetail(e.getMessage());
         detail.setProperty("HORA: ", LocalDate.now());
         return detail;

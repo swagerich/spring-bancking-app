@@ -4,7 +4,6 @@ import com.erich.dev.dto.UsuarioDto;
 
 import static com.erich.dev.util.BankPath.*;
 
-import com.erich.dev.entity.Usuario;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -13,7 +12,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
 
 
@@ -45,5 +43,8 @@ public interface ClientApi {
     @PatchMapping(value = Path + "/client/invalidate/{userId}")
     ResponseEntity<Long> invalidateAccount(@PathVariable Long userId);
 
+
+    @GetMapping(value = Path + "/client/users")
+    ResponseEntity<List<UsuarioDto>> getAllRoleUser();
 
 }

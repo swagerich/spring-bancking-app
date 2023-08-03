@@ -38,7 +38,7 @@ public class TransactionServiceImpl implements TransactionService {
         Transaction transaction = TransactionDto.toEntity(transactionDto);
         boolean usuario = clientRepo.findById(transaction.getUser().getId()).isPresent();
         if (!usuario) {
-            throw new EntityNotFoundException("Usuario no existe para la transaccion!");
+            throw new EntityNotFoundException("User does not exist for the transaction!");
         }
         BigDecimal amount = transaction.getAmount()
                 .multiply(BigDecimal.valueOf(transactionType(transaction.getType())));
@@ -54,7 +54,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     @Transactional(readOnly = true)
     public TransactionDto findById(Long id) {
-        return transactionRepo.findById(id).map(TransactionDto::fromEntity).orElseThrow(() -> new EntityNotFoundException("Transaction id no encontrado"));
+        return transactionRepo.findById(id).map(TransactionDto::fromEntity).orElseThrow(() -> new EntityNotFoundException("TransactionId not found"));
     }
 
 
@@ -88,7 +88,7 @@ public class TransactionServiceImpl implements TransactionService {
      */
     @Transactional(readOnly = true)
     public TransactionPageByUser findAllTransactionPageByUserId(Long userId, Integer page, Integer size) {
-        Usuario usuario = clientRepo.findById(userId).orElseThrow(() -> new EntityNotFoundException("Usuario  no existe!"));
+        Usuario usuario = clientRepo.findById(userId).orElseThrow(() -> new EntityNotFoundException("User does not exist!"));
         Pageable pageable = PageRequest.of(page, size);
         Page<Transaction> pageUser = transactionRepo.findUserById(usuario.getId(), pageable);
         List<TransactionDto> transactionDtos = pageUser.getContent().stream().map(TransactionDto::fromEntity).toList();

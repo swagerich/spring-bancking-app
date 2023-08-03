@@ -1,7 +1,6 @@
 package com.erich.dev.controller;
 
 import com.erich.dev.controller.api.AuthenticationApi;
-import com.erich.dev.dto.UsuarioDto;
 import com.erich.dev.dto.proyection.JwtResponse;
 import com.erich.dev.dto.proyection.LoginRequest;
 import com.erich.dev.dto.proyection.SignupRequest;
@@ -41,8 +40,13 @@ public class AuthenticationController implements AuthenticationApi {
     }
 
     @Override
-    public Usuario currentUser(Principal principal) {
+    public ResponseEntity<Usuario> currentUser(Principal principal) {
         UserDetails userDetails = customUserService.loadUserByUsername(principal.getName());
-        return (Usuario) userDetails;
+        Usuario usuario = (Usuario) userDetails;
+        if(usuario.isEnabled()){
+            return new ResponseEntity<>(usuario,HttpStatus.OK);
+        }else{
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 }

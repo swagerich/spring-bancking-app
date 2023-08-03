@@ -28,14 +28,10 @@ public class AccountServiceImpl implements AccountService {
     @Override
     @Transactional
     public AccountDto save(AccountDto dto) {
-        //blok update
-//        if(dto.getId() != null){
-//            throw new OperationNotAllowedException("Operation no permitida, no se puede actualizar!");
-//        }
         Account account = AccountDto.toEntity(dto);
         boolean isUser = accountRepo.findByUserId(account.getUser().getId()).isPresent();
         if (isUser && account.getUser().isActive()) {
-            throw new OperationNotAllowedException("El cliente ya existe en la cuenta!");
+            throw new OperationNotAllowedException("The customer already exists in the account!");
         }
         if (account.getId() == null) {
             account.setNumber(generateNumRandom());
