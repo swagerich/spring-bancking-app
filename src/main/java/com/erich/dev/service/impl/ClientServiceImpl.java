@@ -129,12 +129,9 @@ public class ClientServiceImpl implements ClientService {
         this.auth(loginRequest.username(), loginRequest.password());
         UserDetails userDetails = customUserService.loadUserByUsername(loginRequest.username());
         Usuario usuario = (Usuario) userDetails;
-        Map<String,Object> claims = new HashMap<>();
-        claims.put("userId",usuario.getId());
-        claims.put("fullName",usuario.getFirstName() + " " + usuario.getLastName());
-        claims.put("authorities",usuario.getAuthorities());
+        Map<String, Object> claims = showDetailClaims(usuario);
         return JwtResponse.builder()
-                .accessToken(jwtTokenProvider.generateToken(usuario,claims))
+                .accessToken(jwtTokenProvider.generateToken(usuario, claims))
                 .TokenType("Bearer ")
                 .build();
     }
@@ -154,14 +151,17 @@ public class ClientServiceImpl implements ClientService {
         validateRepeatPassword(signupRequest);
         validateRole(signupRequest, u);
         Usuario usuario = clientRepo.save(u);
-        Map<String,Object> claims = new HashMap<>();
-        claims.put("userId",usuario.getId());
-        claims.put("fullName",usuario.getFirstName() + " " + usuario.getLastName());
-        claims.put("authorities",usuario.getAuthorities());
-        return  JwtResponse.builder()
-                .accessToken(jwtTokenProvider.generateToken(usuario,claims))
+        Map<String, Object> claims = showDetailClaims(usuario);
+        return JwtResponse.builder()
+                .accessToken(jwtTokenProvider.generateToken(usuario, claims))
                 .TokenType("Bearer ")
                 .build();
+    }
+
+    private Map<String, Object> showDetailClaims(Usuario usuario) {
+        return Map.of("userId", usuario.getId(),
+                "fullName", usuario.getFirstName() + " " + usuario.getLastName(),
+                "authorities", usuario.getAuthorities());
     }
 
     private void validateRole(SignupRequest signupRequest, Usuario u) {
@@ -177,6 +177,7 @@ public class ClientServiceImpl implements ClientService {
             u.setRoles(roles);
         }
     }
+
     private void auth(String email, String password) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));

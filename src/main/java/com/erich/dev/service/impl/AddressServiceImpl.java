@@ -42,8 +42,14 @@ public class AddressServiceImpl implements AddressService {
 
     @Override
     @Transactional(readOnly = true)
+    public AddressDto findByUserId(Long userId) {
+        return addressRepo.findByUserId(userId).map(AddressDto::fromEntity).orElseThrow((()  -> new EntityNotFoundException("User ID NOT FOUND")));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public AddressDto findById(Long id) {
-        return addressRepo.findById(id).map(AddressDto::fromEntity).orElseThrow(() -> new EntityNotFoundException("Addres Id NO FOUNT"));
+        return addressRepo.findById(id).map(AddressDto::fromEntity).orElseThrow(() -> new EntityNotFoundException("Addres Id NO FOUND"));
     }
 
     @Override

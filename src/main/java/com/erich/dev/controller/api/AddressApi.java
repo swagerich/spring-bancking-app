@@ -28,6 +28,9 @@ public interface AddressApi {
     @GetMapping(value = Path + "/address/{id}")
     ResponseEntity<AddressDto> findId(@PathVariable Long id);
 
+    @GetMapping(value = Path + "/address/user/{userId}")
+    ResponseEntity<AddressDto> findByUserId(@PathVariable Long userId);
+
 
     @PutMapping(value = Path + "/address/{id}")
     ResponseEntity<AddressDto> update(@RequestBody AddressDto dto, @PathVariable Long id);
