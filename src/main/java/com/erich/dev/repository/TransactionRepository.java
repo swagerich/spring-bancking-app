@@ -1,6 +1,6 @@
 package com.erich.dev.repository;
 
-import com.erich.dev.dto.TransactionSumDetails;
+import com.erich.dev.dto.proyection.TransactionSumDetails;
 import com.erich.dev.entity.Transaction;
 import com.erich.dev.util.TransactionType;
 import org.springframework.data.domain.Page;

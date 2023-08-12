@@ -60,4 +60,14 @@ public class ClientController implements ClientApi {
     public ResponseEntity<List<UsuarioDto>> getAllRoleUser() {
         return new ResponseEntity<>(clientService.findAllRoleUser(),HttpStatus.OK);
     }
+
+    @Override
+    public ResponseEntity<Integer> countRoleUserIsActive() {
+        return new ResponseEntity<>(clientService.countRoleUserIsActive(),HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Integer> countRoleUserIsInactive() {
+        return new ResponseEntity<>(clientService.countRoleUserInactive(),HttpStatus.OK);
+    }
 }

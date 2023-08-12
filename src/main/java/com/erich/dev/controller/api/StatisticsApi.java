@@ -2,7 +2,8 @@ package com.erich.dev.controller.api;
 
 import static com.erich.dev.util.BankPath.*;
 
-import com.erich.dev.dto.TransactionSumDetails;
+import com.erich.dev.dto.proyection.TransactionSumDetails;
+import com.erich.dev.dto.proyection.impl.UsuariosDetailsImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -37,4 +38,9 @@ public interface StatisticsApi {
 
     @GetMapping(value = Path + "/statistics/high-deposit/{userId}")
     ResponseEntity<BigDecimal> highDeposit(@PathVariable Long userId);
+
+    @GetMapping(value = Path + "/statistics/users")
+    ResponseEntity<List<UsuariosDetailsImpl>> countUsersByDate(
+            @RequestParam("start-date")  @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
+            @RequestParam("last-date") @DateTimeFormat(pattern = "yyyy-MM-dd")  LocalDate lastDate);
 }

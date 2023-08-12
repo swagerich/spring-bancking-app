@@ -4,6 +4,8 @@ import com.erich.dev.entity.Usuario;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 
 @Getter
 @Setter
@@ -38,6 +40,8 @@ public class UsuarioDto {
 
     private boolean active;
 
+    private LocalDate usuariosDate;
+
     public static UsuarioDto fromEntity(Usuario usuario) {
         if (usuario == null) {
             return null;
@@ -52,6 +56,7 @@ public class UsuarioDto {
                 .age(usuario.getAge())
                 .numberAccount(usuario.getAccount() != null ? usuario.getAccount().getNumber() : "")
                 .active(usuario.isActive())
+                .usuariosDate(usuario.getUsuariosDate())
                 .build();
     }
 
@@ -67,6 +72,7 @@ public class UsuarioDto {
                 .email(usuarioDto.getEmail())
                 .password(usuarioDto.getPassword())
                 .age(usuarioDto.getAge())
+                .usuariosDate(LocalDate.now())
                 .build();
     }
 

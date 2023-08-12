@@ -1,6 +1,8 @@
 package com.erich.dev.service.impl;
 
-import com.erich.dev.dto.TransactionSumDetails;
+import com.erich.dev.dto.proyection.TransactionSumDetails;
+import com.erich.dev.dto.proyection.impl.UsuariosDetailsImpl;
+import com.erich.dev.repository.ClientRepository;
 import com.erich.dev.repository.TransactionRepository;
 import com.erich.dev.service.StatisticsService;
 import com.erich.dev.util.TransactionType;
@@ -19,6 +21,8 @@ import java.util.List;
 public class StatisticsServiceImpl implements StatisticsService {
 
     private final TransactionRepository transactionRepo;
+
+    private final ClientRepository clientRepo;
 
     @Override
     @Transactional(readOnly = true)
@@ -44,5 +48,12 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Transactional(readOnly = true)
     public BigDecimal highDeposit(Long userId) {
         return transactionRepo.findHighestAmountByTransactionType(userId, TransactionType.DEPOSITO);
+    }
+
+    @Override
+    public List<UsuariosDetailsImpl> countUsersByDate(LocalDate start, LocalDate last) {
+        LocalDateTime startDate = LocalDateTime.of(start, LocalTime.of(0, 0, 0));
+        LocalDateTime lastDate = LocalDateTime.of(last, LocalTime.of(23, 59, 59));
+        return clientRepo.countUsersByDateAndRole(startDate,lastDate);
     }
 }

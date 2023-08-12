@@ -1,7 +1,8 @@
 package com.erich.dev.controller;
 
 import com.erich.dev.controller.api.StatisticsApi;
-import com.erich.dev.dto.TransactionSumDetails;
+import com.erich.dev.dto.proyection.TransactionSumDetails;
+import com.erich.dev.dto.proyection.impl.UsuariosDetailsImpl;
 import com.erich.dev.service.impl.StatisticsServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,5 +41,10 @@ public class StatisticsController implements StatisticsApi {
     @Override
     public ResponseEntity<BigDecimal> highDeposit(Long userId) {
         return new ResponseEntity<>(statisticsService.highDeposit(userId),HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<List<UsuariosDetailsImpl>> countUsersByDate(LocalDate startDate, LocalDate lastDate) {
+        return new ResponseEntity<>(statisticsService.countUsersByDate(startDate,lastDate),HttpStatus.OK);
     }
 }

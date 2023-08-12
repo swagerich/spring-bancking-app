@@ -22,7 +22,7 @@ public class SpringBanckingAppApplication  implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         Set<Role> roles = new HashSet<>();
         Role roleAdmin = Role.builder()
                 .authority("ROLE_ADMIN")

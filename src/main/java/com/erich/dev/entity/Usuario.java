@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -38,6 +39,8 @@ public class Usuario extends AbstractEntity implements UserDetails {
     private boolean active;
 
     private String repeatPassword;
+
+    private LocalDate usuariosDate;
 
     @OneToOne
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_usuario_address"))

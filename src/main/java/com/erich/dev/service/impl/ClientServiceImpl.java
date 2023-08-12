@@ -28,6 +28,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -125,6 +126,23 @@ public class ClientServiceImpl implements ClientService {
         clientRepo.deleteById(id);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Integer countRoleUserIsActive() {
+        Role role = roleRepo.findByAuthority("ROLE_USER").orElseThrow(() -> new EntityNotFoundException("Role not exist!"));
+        List<Usuario> activeRoleUser = clientRepo.findByActiveAndRolesContaining(true, role);
+        return activeRoleUser.size();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Integer countRoleUserInactive() {
+        Role role = roleRepo.findByAuthority("ROLE_USER").orElseThrow(() -> new EntityNotFoundException("Role not exist!"));
+        List<Usuario> activeRoleUser = clientRepo.findByActiveAndRolesContaining(false, role);
+        return activeRoleUser.size();
+    }
+    @Override
+    @Transactional
     public JwtResponse login(LoginRequest loginRequest) {
         this.auth(loginRequest.username(), loginRequest.password());
         UserDetails userDetails = customUserService.loadUserByUsername(loginRequest.username());
@@ -136,6 +154,7 @@ public class ClientServiceImpl implements ClientService {
                 .build();
     }
 
+    @Override
     @Transactional
     public JwtResponse register(SignupRequest signupRequest) {
         validationFieldSignup(signupRequest);
@@ -147,6 +166,7 @@ public class ClientServiceImpl implements ClientService {
                 .password(passwordEncoder.encode(signupRequest.password()))
                 .repeatPassword(passwordEncoder.encode(signupRequest.repeatPassword()))
                 .age(signupRequest.age())
+                .usuariosDate(LocalDate.now())
                 .build();
         validateRepeatPassword(signupRequest);
         validateRole(signupRequest, u);

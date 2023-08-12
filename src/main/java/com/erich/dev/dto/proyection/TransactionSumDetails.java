@@ -1,4 +1,4 @@
-package com.erich.dev.dto;
+package com.erich.dev.dto.proyection;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

@@ -18,7 +18,4 @@ public class Role extends AbstractEntity{
 
     private String authority;
 
-//    @OneToOne
-//    @JoinColumn(name = "id_user")
-//    private Usuario user;
 }

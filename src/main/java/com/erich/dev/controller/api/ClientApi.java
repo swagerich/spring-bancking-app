@@ -43,8 +43,13 @@ public interface ClientApi {
     @PatchMapping(value = Path + "/client/invalidate/{userId}")
     ResponseEntity<Long> invalidateAccount(@PathVariable Long userId);
 
-
     @GetMapping(value = Path + "/client/users")
     ResponseEntity<List<UsuarioDto>> getAllRoleUser();
+
+    @GetMapping(value = Path + "/client/users/active")
+    ResponseEntity<Integer> countRoleUserIsActive();
+
+    @GetMapping(value = Path + "/client/users/inactive")
+    ResponseEntity<Integer> countRoleUserIsInactive();
 
 }
