@@ -8,7 +8,10 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class JwtResponse {
+
     private String accessToken;
-  //  private String refresToken;
-    private String TokenType;
+
+    private String refreshToken;
+
+    private String tokenType;
 }

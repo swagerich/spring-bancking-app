@@ -1,7 +1,9 @@
 package com.erich.dev.controller.api;
 
 
+import com.erich.dev.dto.proyection.JwtResponse;
 import com.erich.dev.dto.proyection.LoginRequest;
+import com.erich.dev.dto.proyection.RefreshTokenRequest;
 import com.erich.dev.dto.proyection.SignupRequest;
 import com.erich.dev.entity.Usuario;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +19,11 @@ public interface AuthenticationApi {
     ResponseEntity<?> register(@RequestBody SignupRequest customDto);
 
     @PostMapping(value = {"/login","/signin"})
-    ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) throws Exception;
+    ResponseEntity<?> login(@RequestBody LoginRequest loginRequest);
 
     @GetMapping(value = "/current-user")
     ResponseEntity<Usuario> currentUser(Principal principal);
+
+    @PostMapping(value = "/refresh")
+    ResponseEntity<JwtResponse> refresh(@RequestBody RefreshTokenRequest request);
 }

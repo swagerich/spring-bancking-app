@@ -6,6 +6,7 @@ import com.erich.dev.dto.proyection.JwtResponse;
 import com.erich.dev.dto.proyection.LoginRequest;
 import com.erich.dev.dto.proyection.SignupRequest;
 import com.erich.dev.entity.Account;
+import com.erich.dev.entity.RefreshToken;
 import com.erich.dev.entity.Role;
 import com.erich.dev.entity.Usuario;
 import com.erich.dev.exception.EntityNotFoundException;
@@ -46,6 +47,8 @@ public class ClientServiceImpl implements ClientService {
     private final ObjectsValidator<UsuarioDto> validator;
 
     private final JwtTokenProvider jwtTokenProvider;
+
+    private final RefreshTokenServiceImpl refreshTokenService;
 
     private final AuthenticationManager authenticationManager;
 
@@ -146,11 +149,13 @@ public class ClientServiceImpl implements ClientService {
     public JwtResponse login(LoginRequest loginRequest) {
         this.auth(loginRequest.username(), loginRequest.password());
         UserDetails userDetails = customUserService.loadUserByUsername(loginRequest.username());
+        RefreshToken refresh =  refreshTokenService.createRefreshToken(loginRequest.username());
         Usuario usuario = (Usuario) userDetails;
         Map<String, Object> claims = showDetailClaims(usuario);
         return JwtResponse.builder()
                 .accessToken(jwtTokenProvider.generateToken(usuario, claims))
-                .TokenType("Bearer ")
+                .refreshToken(refresh.getToken())
+                .tokenType("Bearer ")
                 .build();
     }
 
@@ -174,7 +179,7 @@ public class ClientServiceImpl implements ClientService {
         Map<String, Object> claims = showDetailClaims(usuario);
         return JwtResponse.builder()
                 .accessToken(jwtTokenProvider.generateToken(usuario, claims))
-                .TokenType("Bearer ")
+                .tokenType("Bearer ")
                 .build();
     }
 

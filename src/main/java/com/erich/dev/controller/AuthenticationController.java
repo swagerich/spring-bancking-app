@@ -3,10 +3,12 @@ package com.erich.dev.controller;
 import com.erich.dev.controller.api.AuthenticationApi;
 import com.erich.dev.dto.proyection.JwtResponse;
 import com.erich.dev.dto.proyection.LoginRequest;
+import com.erich.dev.dto.proyection.RefreshTokenRequest;
 import com.erich.dev.dto.proyection.SignupRequest;
 import com.erich.dev.entity.Usuario;
 import com.erich.dev.security.CustomUserServiceImpl;
 import com.erich.dev.service.impl.ClientServiceImpl;
+import com.erich.dev.service.impl.RefreshTokenServiceImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,9 +25,12 @@ public class AuthenticationController implements AuthenticationApi {
 
     private final CustomUserServiceImpl customUserService;
 
-    public AuthenticationController(ClientServiceImpl clientService, CustomUserServiceImpl customUserService) {
+    private final RefreshTokenServiceImpl refreshTokenService;
+
+    public AuthenticationController(ClientServiceImpl clientService, CustomUserServiceImpl customUserService, RefreshTokenServiceImpl refreshTokenService) {
         this.clientService = clientService;
         this.customUserService = customUserService;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @Override
@@ -34,7 +39,7 @@ public class AuthenticationController implements AuthenticationApi {
     }
 
     @Override
-    public ResponseEntity<?> login(LoginRequest loginRequest) throws Exception {
+    public ResponseEntity<?> login(LoginRequest loginRequest) {
         JwtResponse login = clientService.login(loginRequest);
         return new ResponseEntity<>(login, HttpStatus.OK);
     }
@@ -48,5 +53,10 @@ public class AuthenticationController implements AuthenticationApi {
         }else{
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+    }
+
+    @Override
+    public ResponseEntity<JwtResponse> refresh(RefreshTokenRequest request) {
+        return new ResponseEntity<>(refreshTokenService.refreshToken(request),HttpStatus.CREATED);
     }
 }
