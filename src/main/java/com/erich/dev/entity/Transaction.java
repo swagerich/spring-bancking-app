@@ -1,6 +1,6 @@
 package com.erich.dev.entity;
 
-import com.erich.dev.util.TransactionType;
+import com.erich.dev.util.enumeration.TransactionType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;

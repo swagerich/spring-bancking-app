@@ -1,20 +1,7 @@
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/bancking_app
-    driver-class-name: org.postgresql.Driver
-    username: postgres
-    password: 12345
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-    database: postgresql
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+ profiles:
+   active: dev
 
-app:
-  jwt:
-    secret-key: e7918a5ed84f1c35da180cadc375efa01bd50323f27b747bd6b802cefa48f487
-    expiration : 1800000
-    refreshTokenDurationMs: 3600000
 springdoc:
   swagger-ui:
     path: /swagger-ui-bank.html

@@ -13,7 +13,6 @@ import com.erich.dev.service.RefreshTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.Map;
@@ -36,15 +35,20 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     private Long expireToken;
 
     @Override
-    @Transactional
     public RefreshToken createRefreshToken(String username) {
         Usuario usuario = clientRepo.findByUserName(username).orElseThrow(() -> new EntityNotFoundException("Usuario not found"));
-        RefreshToken refresh = RefreshToken.builder()
-                .usuario(usuario)
-                .token(UUID.randomUUID().toString())
-                .expireDate(Instant.now().plusMillis(expireToken))
-                .build();
-        return refreshTokenRepo.save(refresh);
+        RefreshToken existsRefresh = refreshTokenRepo.findByUsuario(usuario);
+        if (existsRefresh != null) {
+            existsRefresh.setToken(UUID.randomUUID().toString());
+            existsRefresh.setExpireDate(Instant.now().plusMillis(expireToken));
+        } else {
+            existsRefresh = RefreshToken.builder()
+                    .usuario(usuario)
+                    .token(UUID.randomUUID().toString())
+                    .expireDate(Instant.now().plusMillis(expireToken))
+                    .build();
+        }
+        return refreshTokenRepo.save(existsRefresh);
     }
 
     @Override

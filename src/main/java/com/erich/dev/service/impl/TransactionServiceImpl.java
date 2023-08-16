@@ -8,7 +8,7 @@ import com.erich.dev.exception.EntityNotFoundException;
 import com.erich.dev.repository.ClientRepository;
 import com.erich.dev.repository.TransactionRepository;
 import com.erich.dev.service.TransactionService;
-import com.erich.dev.util.TransactionType;
+import com.erich.dev.util.enumeration.TransactionType;
 import com.erich.dev.util.validation.ObjectsValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

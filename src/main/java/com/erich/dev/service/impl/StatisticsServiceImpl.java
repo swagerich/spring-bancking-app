@@ -5,7 +5,7 @@ import com.erich.dev.dto.proyection.impl.UsuariosDetailsImpl;
 import com.erich.dev.repository.ClientRepository;
 import com.erich.dev.repository.TransactionRepository;
 import com.erich.dev.service.StatisticsService;
-import com.erich.dev.util.TransactionType;
+import com.erich.dev.util.enumeration.TransactionType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

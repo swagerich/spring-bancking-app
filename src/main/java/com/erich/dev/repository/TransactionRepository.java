@@ -2,7 +2,7 @@ package com.erich.dev.repository;
 
 import com.erich.dev.dto.proyection.TransactionSumDetails;
 import com.erich.dev.entity.Transaction;
-import com.erich.dev.util.TransactionType;
+import com.erich.dev.util.enumeration.TransactionType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;

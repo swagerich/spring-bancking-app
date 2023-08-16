@@ -1,4 +1,4 @@
-package com.erich.dev.util;
+package com.erich.dev.util.enumeration;
 
 public enum TransactionType {
     DEPOSITO,

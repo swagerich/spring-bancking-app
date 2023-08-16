@@ -2,7 +2,7 @@ package com.erich.dev.dto;
 
 import com.erich.dev.entity.Transaction;
 import com.erich.dev.entity.Usuario;
-import com.erich.dev.util.TransactionType;
+import com.erich.dev.util.enumeration.TransactionType;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
