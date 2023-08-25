@@ -39,11 +39,6 @@ public class AddressController implements AddressApi {
     }
 
     @Override
-    public ResponseEntity<Boolean> existsByUserId(Long userId) {
-        return new ResponseEntity<>(addressService.existByUserId(userId),HttpStatus.OK);
-    }
-
-    @Override
     public ResponseEntity<AddressDto> update(AddressDto dto, Long id) {
         return null;
     }
