@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import static com.erich.dev.util.BankPath.Path;
 
 public interface AddressApi {
 
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @PostMapping(value = Path + "/address", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Guarda el Address", description = "Crea  el Address")
     @ApiResponses(value = {
@@ -28,9 +30,13 @@ public interface AddressApi {
     @GetMapping(value = Path + "/address/{id}")
     ResponseEntity<AddressDto> findId(@PathVariable Long id);
 
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
     @GetMapping(value = Path + "/address/user/{userId}")
     ResponseEntity<AddressDto> findByUserId(@PathVariable Long userId);
 
+    @PreAuthorize("hasAnyRole('ADMIN','USER')")
+    @GetMapping(value = Path + "/address/exists/{userId}")
+    ResponseEntity<Boolean> existsByUserId(@PathVariable Long userId);
 
     @PutMapping(value = Path + "/address/{id}")
     ResponseEntity<AddressDto> update(@RequestBody AddressDto dto, @PathVariable Long id);

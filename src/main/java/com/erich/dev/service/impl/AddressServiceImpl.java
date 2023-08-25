@@ -60,6 +60,11 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
+    public boolean existByUserId(Long userId) {
+        return addressRepo.existsByUserId(userId);
+    }
+
+    @Override
     @Transactional
     public void deleteById(Long aLong) {
         if(aLong == null){

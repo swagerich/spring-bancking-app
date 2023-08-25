@@ -12,7 +12,7 @@
 * Lombok
 *   
 
-#### Rerence : 
+#### Reference : 
 It is a mini banking system which allows you to create multiple users with 1 role and 1 administrator. 
 the user can make one or many transfers as well as deposit money to his account.
 the user will have a dasboard in which he will be able to see by date how many transactions he has made as maximum, also the user will have a list of transactions. 
