@@ -14,8 +14,13 @@ public interface ClientRepository extends CrudRepository<Usuario,Long>, ClientRe
     boolean existsByEmail(String email);
 
     boolean existsByUserName(String username);
+
+    Optional<Usuario> findByIdAndNamePhoto(Long userId,String namePhoto);
+
     Optional<Usuario> findByUserName(String username);
+
     List<Usuario> findByActiveAndRolesContaining(boolean active, Role role);
+
     List<Usuario> findByRolesContaining(Role role);
 
 //    @Query("SELECT u.usuariosDate as usuariosDate, COUNT(u) as total  FROM Usuario u WHERE u.creationDate BETWEEN :start AND :end GROUP BY u.usuariosDate")

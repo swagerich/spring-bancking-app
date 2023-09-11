@@ -3,10 +3,13 @@ package com.erich.dev.controller;
 import com.erich.dev.controller.api.ClientApi;
 import com.erich.dev.dto.UsuarioDto;
 
+import com.erich.dev.dto.proyection.UploadResponse;
 import com.erich.dev.service.impl.ClientServiceImpl;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -48,26 +51,37 @@ public class ClientController implements ClientApi {
 
     @Override
     public ResponseEntity<Long> validateAccount(Long userId) {
-        return new ResponseEntity<>(clientService.validateAccount(userId),HttpStatus.OK);
+        return new ResponseEntity<>(clientService.validateAccount(userId), HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<Long> invalidateAccount(Long userId) {
-        return new ResponseEntity<>(clientService.invalidateAccount(userId),HttpStatus.OK);
+        return new ResponseEntity<>(clientService.invalidateAccount(userId), HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<List<UsuarioDto>> getAllRoleUser() {
-        return new ResponseEntity<>(clientService.findAllRoleUser(),HttpStatus.OK);
+        return new ResponseEntity<>(clientService.findAllRoleUser(), HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<Integer> countRoleUserIsActive() {
-        return new ResponseEntity<>(clientService.countRoleUserIsActive(),HttpStatus.OK);
+        return new ResponseEntity<>(clientService.countRoleUserIsActive(), HttpStatus.OK);
     }
 
     @Override
     public ResponseEntity<Integer> countRoleUserIsInactive() {
-        return new ResponseEntity<>(clientService.countRoleUserInactive(),HttpStatus.OK);
+        return new ResponseEntity<>(clientService.countRoleUserInactive(), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<UploadResponse> savePhoto(Long userId, MultipartFile file) {
+        return new ResponseEntity<>(clientService.savePhotoByUserId(userId, file), HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<byte[]> getPhoto(Long userId, String fileName) {
+        byte[] photoByUserId = clientService.getPhotoByUserId(userId, fileName);
+        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.valueOf(MediaType.IMAGE_PNG_VALUE)).body(photoByUserId);
     }
 }

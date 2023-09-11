@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface AddressRepository extends CrudRepository<Address,Long> {
 
     Optional<Address> findByUserId(Long userId);
+
+    boolean existsByUserId(Long userId);
 }

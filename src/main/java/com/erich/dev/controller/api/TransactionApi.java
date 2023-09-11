@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +17,7 @@ import static com.erich.dev.util.BankPath.Path;
 
 public interface TransactionApi {
 
+    @PreAuthorize("hasRole('USER')")
     @PostMapping(value = Path + "/transaction", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Guarda el transaction", description = "Crea  el transaction")
     @ApiResponses(value = {
@@ -36,6 +38,7 @@ public interface TransactionApi {
     @GetMapping(value = Path + "/transaction/all/{userId}")
     ResponseEntity<List<TransactionDto>> findAllTransactionByUserId(@PathVariable Long userId);
 
+    @PreAuthorize("hasRole('USER')")
     @GetMapping(value = Path + "/transaction/page")
     ResponseEntity<TransactionPageByUser> findAllTransactionPageByUserId(@RequestParam(required = false) Long userId,
                                                                          @RequestParam(defaultValue = "0") Integer page,

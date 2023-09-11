@@ -2,6 +2,7 @@ package com.erich.dev.service.impl;
 
 import com.erich.dev.dto.AccountDto;
 import com.erich.dev.dto.UsuarioDto;
+import com.erich.dev.dto.proyection.UploadResponse;
 import com.erich.dev.dto.proyection.JwtResponse;
 import com.erich.dev.dto.proyection.LoginRequest;
 import com.erich.dev.dto.proyection.SignupRequest;
@@ -9,6 +10,7 @@ import com.erich.dev.entity.Account;
 import com.erich.dev.entity.RefreshToken;
 import com.erich.dev.entity.Role;
 import com.erich.dev.entity.Usuario;
+import com.erich.dev.exception.DirectoryNotFoundException;
 import com.erich.dev.exception.EntityNotFoundException;
 import com.erich.dev.exception.OperationNotAllowedException;
 import com.erich.dev.repository.ClientRepository;
@@ -28,7 +30,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.FileSystemUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -53,6 +60,8 @@ public class ClientServiceImpl implements ClientService {
     private final AuthenticationManager authenticationManager;
 
     private final CustomUserServiceImpl customUserService;
+
+    private static final String PATH = "D:\\Study&Programming\\Developeando-Practices\\Spring\\spring-bancking-app\\images\\";
 
     @Override
     public UsuarioDto save(UsuarioDto client) {
@@ -149,7 +158,7 @@ public class ClientServiceImpl implements ClientService {
     public JwtResponse login(LoginRequest loginRequest) {
         this.auth(loginRequest.username(), loginRequest.password());
         UserDetails userDetails = customUserService.loadUserByUsername(loginRequest.username());
-        RefreshToken refresh =  refreshTokenService.createRefreshToken(loginRequest.username());
+        RefreshToken refresh = refreshTokenService.createRefreshToken(loginRequest.username());
         Usuario usuario = (Usuario) userDetails;
         Map<String, Object> claims = showDetailClaims(usuario);
         return JwtResponse.builder()
@@ -181,6 +190,42 @@ public class ClientServiceImpl implements ClientService {
                 .accessToken(jwtTokenProvider.generateToken(usuario, claims))
                 .tokenType("Bearer ")
                 .build();
+    }
+
+    @Override
+    public UploadResponse savePhotoByUserId(Long userId, MultipartFile file) {
+        String filePath = PATH + file.getOriginalFilename();
+        Usuario usuario = clientRepo.findById(userId).orElseThrow(() -> new EntityNotFoundException("User id not found"));
+
+        if (usuario.getFilePath() != null) {
+            File previusFile = new File(usuario.getFilePath());
+            if (previusFile.exists() && previusFile.length() > 0) {
+                FileSystemUtils.deleteRecursively(previusFile);
+            }
+        }
+
+        if (!file.isEmpty()) {
+            try {
+                usuario.setNamePhoto(file.getOriginalFilename());
+                usuario.setFilePath(filePath);
+                clientRepo.save(usuario);
+                file.transferTo(new File(filePath));
+                return new UploadResponse("File success!");
+            } catch (IOException e) {
+                throw new DirectoryNotFoundException(e.getMessage());
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public byte[] getPhotoByUserId(Long userId, String fileName) {
+        Usuario usuario = clientRepo.findByIdAndNamePhoto(userId, fileName).orElseThrow(() -> new EntityNotFoundException("UserId or FileName Not Found"));
+        try {
+            return Files.readAllBytes(new File(usuario.getFilePath()).toPath());
+        } catch (IOException e) {
+            throw new DirectoryNotFoundException(e.getMessage());
+        }
     }
 
     private Map<String, Object> showDetailClaims(Usuario usuario) {

@@ -42,6 +42,10 @@ public class Usuario extends AbstractEntity implements UserDetails {
 
     private LocalDate usuariosDate;
 
+    private String namePhoto;
+
+    private String filePath;
+
     @OneToOne
     @JoinColumn(foreignKey = @ForeignKey(name = "fk_usuario_address"))
     @JsonIgnore

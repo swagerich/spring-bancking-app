@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import static com.erich.dev.util.BankPath.Path;
 
 public interface ContactApi {
 
+    @PreAuthorize("hasRole('USER')")
     @PostMapping(value = Path + "/contact", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Guarda el contact", description = "Crea  el contact")
     @ApiResponses(value = {
@@ -29,9 +31,11 @@ public interface ContactApi {
     @GetMapping(value = Path + "/contact/{id}")
     ResponseEntity<ContactDto> findId(@PathVariable Long id);
 
+    @PreAuthorize("hasRole('USER')")
     @DeleteMapping(value = Path + "/contact/{id}")
     ResponseEntity<Void> delete(@PathVariable Long id);
 
+    @PreAuthorize("hasRole('USER')")
     @GetMapping(value = Path + "/contact/all/{userId}")
     ResponseEntity<List<ContactDto>> findAllContactByUserId(@PathVariable Long userId);
 }

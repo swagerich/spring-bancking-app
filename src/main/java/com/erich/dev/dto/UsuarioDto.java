@@ -42,6 +42,8 @@ public class UsuarioDto {
 
     private LocalDate usuariosDate;
 
+    private String namePhoto;
+
     public static UsuarioDto fromEntity(Usuario usuario) {
         if (usuario == null) {
             return null;
@@ -57,6 +59,7 @@ public class UsuarioDto {
                 .numberAccount(usuario.getAccount() != null ? usuario.getAccount().getNumber() : "")
                 .active(usuario.isActive())
                 .usuariosDate(usuario.getUsuariosDate())
+                .namePhoto(usuario.getNamePhoto())
                 .build();
     }
 
@@ -72,6 +75,7 @@ public class UsuarioDto {
                 .email(usuarioDto.getEmail())
                 .password(usuarioDto.getPassword())
                 .age(usuarioDto.getAge())
+                .namePhoto(usuarioDto.getNamePhoto())
                 .usuariosDate(LocalDate.now())
                 .build();
     }

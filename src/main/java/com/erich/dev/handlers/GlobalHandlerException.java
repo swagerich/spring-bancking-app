@@ -1,5 +1,6 @@
 package com.erich.dev.handlers;
 
+import com.erich.dev.exception.DirectoryNotFoundException;
 import com.erich.dev.exception.EntityNotFoundException;
 import com.erich.dev.exception.ObjectValidationException;
 import com.erich.dev.exception.OperationNotAllowedException;
@@ -83,5 +84,13 @@ public class GlobalHandlerException {
         return detail;
     }
 
+    @ExceptionHandler(DirectoryNotFoundException.class)
+    public ProblemDetail handleDirectoryIOException(DirectoryNotFoundException e) {
+        ProblemDetail detail = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+        detail.setTitle("INTERNAL_SERVER_ERROR");
+        detail.setDetail(e.getMessage());
+        detail.setProperty("Hora:", LocalDate.now());
+        return detail;
+    }
 
 }
