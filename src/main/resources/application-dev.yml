@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/bancking_app
+    url: jdbc:postgresql://${spring-postgre.postgres.database.azure.com:localhost}:5432/bancking_app
     driver-class-name: org.postgresql.Driver
     username: postgres
     password: 12345

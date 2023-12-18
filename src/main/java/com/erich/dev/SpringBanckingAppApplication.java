@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @SpringBootApplication
-public class SpringBanckingAppApplication  implements CommandLineRunner {
+public class SpringBanckingAppApplication implements CommandLineRunner {
     private final RoleRepository roleRepo;
 
     public SpringBanckingAppApplication(RoleRepository roleRepo) {
@@ -24,14 +24,18 @@ public class SpringBanckingAppApplication  implements CommandLineRunner {
     @Override
     public void run(String... args) {
         Set<Role> roles = new HashSet<>();
-        Role roleAdmin = Role.builder()
-                .authority("ROLE_ADMIN")
-                .build();
-        Role roleUser = Role.builder()
-                .authority("ROLE_USER")
-                .build();
-        roles.add(roleAdmin);
-        roles.add(roleUser);
+        if (roleRepo.findByAuthority("ROLE_ADMIN").isEmpty()) {
+            Role roleAdmin = Role.builder()
+                    .authority("ROLE_ADMIN")
+                    .build();
+            roles.add(roleAdmin);
+        }
+        if (roleRepo.findByAuthority("ROLE_USER").isEmpty()) {
+            Role roleUser = Role.builder()
+                    .authority("ROLE_USER")
+                    .build();
+            roles.add(roleUser);
+        }
         roleRepo.saveAll(roles);
     }
 }

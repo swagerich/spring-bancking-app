@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/bancking_app
+    url: jdbc:postgresql://spring-postgre.postgres.database.azure.com:5432/bancking_app
     driver-class-name: org.postgresql.Driver
-    username: postgres
-    password: 12345
+    username: swagerich
+    password: The456developer
   jpa:
     hibernate:
       ddl-auto: update
